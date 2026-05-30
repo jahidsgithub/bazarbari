@@ -1,40 +1,25 @@
 const express = require("express");
 const router = express.Router();
-
 const db = require("../config/db");
 
 router.get("/", async (req, res) => {
   try {
-    const [products] = await db.query(
-      "SELECT * FROM products ORDER BY id DESC"
-    );
-
+    const [products] = await db.query("SELECT * FROM products ORDER BY id DESC");
     res.json(products);
   } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
 router.get("/:id", async (req, res) => {
   try {
-    const [product] = await db.query(
-      "SELECT * FROM products WHERE id=?",
-      [req.params.id]
-    );
+    const [product] = await db.query("SELECT * FROM products WHERE id=?", [
+      req.params.id,
+    ]);
 
     res.json(product[0]);
   } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -47,14 +32,15 @@ router.post("/", async (req, res) => {
       price,
       old_price,
       stock,
+      short_description,
       description,
       image,
     } = req.body;
 
     await db.query(
       `INSERT INTO products 
-      (category_id,name,slug,price,old_price,stock,description,image)
-      VALUES (?,?,?,?,?,?,?,?)`,
+      (category_id, name, slug, price, old_price, stock, short_description, description, image)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         category_id,
         name,
@@ -62,43 +48,70 @@ router.post("/", async (req, res) => {
         price,
         old_price,
         stock,
+        short_description,
         description,
         image,
       ]
     );
 
-    res.json({
-      success: true,
-      message: "Product added successfully",
-    });
+    res.json({ success: true, message: "Product added successfully" });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+router.put("/:id", async (req, res) => {
+  try {
+    const {
+      category_id,
+      name,
+      slug,
+      price,
+      old_price,
+      stock,
+      short_description,
+      description,
+      image,
+    } = req.body;
+
+    await db.query(
+      `UPDATE products SET
+      category_id=?,
+      name=?,
+      slug=?,
+      price=?,
+      old_price=?,
+      stock=?,
+      short_description=?,
+      description=?,
+      image=?
+      WHERE id=?`,
+      [
+        category_id,
+        name,
+        slug,
+        price,
+        old_price,
+        stock,
+        short_description,
+        description,
+        image,
+        req.params.id,
+      ]
+    );
+
+    res.json({ success: true, message: "Product updated successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
 router.delete("/:id", async (req, res) => {
   try {
-    await db.query(
-      "DELETE FROM products WHERE id=?",
-      [req.params.id]
-    );
-
-    res.json({
-      success: true,
-      message: "Product deleted",
-    });
+    await db.query("DELETE FROM products WHERE id=?", [req.params.id]);
+    res.json({ success: true, message: "Product deleted" });
   } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

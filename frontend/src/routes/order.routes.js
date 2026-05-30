@@ -55,7 +55,11 @@ router.post("/", async (req, res) => {
       order_id: orderId,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
@@ -63,24 +67,6 @@ router.get("/", async (req, res) => {
   try {
     const [orders] = await db.query("SELECT * FROM orders ORDER BY id DESC");
     res.json(orders);
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-router.put("/:id/status", async (req, res) => {
-  try {
-    const { order_status } = req.body;
-
-    await db.query("UPDATE orders SET order_status=? WHERE id=?", [
-      order_status,
-      req.params.id,
-    ]);
-
-    res.json({
-      success: true,
-      message: "Order status updated",
-    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

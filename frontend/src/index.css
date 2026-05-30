@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gb-green: #0aad0a;
+  --gb-dark: #087f23;
+  --gb-orange: #ff7a00;
+  --gb-bg: #f7f8fa;
+  --gb-border: #e8edf2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--gb-bg);
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  color: #1f2937;
+}
+
+button,
+a {
+  transition: 0.2s ease;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
